@@ -1,0 +1,18 @@
+# Core
+pandas>=2.0.0
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+
+# GCP
+google-cloud-bigquery>=3.14.0
+google-cloud-storage>=2.14.0
+
+# Scrapers
+holidays>=0.40
+edgar>=5.4.0
+
+# Utilities
+python-dotenv>=1.0.0
+
+# Testing
+pytest>=7.0.0

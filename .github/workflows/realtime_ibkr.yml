@@ -1,0 +1,59 @@
+name: IBKR Real-time Worker
+
+# This workflow is intended for self-hosted runners or manual dispatch.
+# GitHub Actions free tier is not suitable for 5-minute polling.
+#
+# Recommended production deployment:
+#   - Google Cloud Run Job with Cloud Scheduler (every 5 min)
+#   - Compute Engine micro VM with cron
+#   - Cloud Functions triggered by Cloud Scheduler
+
+on:
+  workflow_dispatch:
+    inputs:
+      cycles:
+        description: 'Number of scrape cycles to run (0 = single run)'
+        required: false
+        default: '1'
+        type: string
+
+jobs:
+  ibkr-scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      BQ_DATASET: ${{ vars.BQ_DATASET || 'trading_data' }}
+      ALPHA_API_KEY: ${{ secrets.ALPHA_API_KEY }}
+      FINRA_CLIENT_ID: ${{ secrets.FINRA_CLIENT_ID }}
+      FINRA_CLIENT_SECRET: ${{ secrets.FINRA_CLIENT_SECRET }}
+      IBKR_HOST: ${{ vars.IBKR_HOST || '127.0.0.1' }}
+      IBKR_PORT: ${{ vars.IBKR_PORT || '7496' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run IBKR scraper
+        run: |
+          CYCLES="${{ github.event.inputs.cycles || '1' }}"
+          echo "Running IBKR scraper for $CYCLES cycle(s)"
+          for i in $(seq 1 "$CYCLES"); do
+            echo "--- Cycle $i of $CYCLES ---"
+            python -m pipeline run ibkr_short
+            if [ "$i" -lt "$CYCLES" ]; then
+              echo "Sleeping 5 minutes before next cycle..."
+              sleep 300
+            fi
+          done

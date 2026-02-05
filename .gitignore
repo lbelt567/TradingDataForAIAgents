@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment files (never commit secrets)
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# GCP credentials (never commit)
+*.json
+!package.json
+!tsconfig.json
+
+# Data files (data lives in BigQuery, not git)
+*.csv
+*.parquet
+*.pickle
+*.pkl
