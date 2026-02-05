@@ -30,6 +30,11 @@ Thumbs.db
 !package.json
 !tsconfig.json
 
+# Test / coverage artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+
 # Data files (data lives in BigQuery, not git)
 *.csv
 *.parquet
