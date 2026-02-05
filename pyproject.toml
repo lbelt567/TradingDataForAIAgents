@@ -1,0 +1,30 @@
+[project]
+name = "trading-data-pipeline"
+version = "2.0.0"
+description = "BigQuery-first trading data pipeline for AI agents"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "integration: tests that require live GCP/API credentials (deselect with '-m \"not integration\"')",
+    "slow: tests that take a long time to run",
+]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+]
+
+[tool.coverage.run]
+source = ["pipeline", "scrapers"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.",
+    "if TYPE_CHECKING:",
+]
